@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test RTSP → WebSocket Stream via API</title>
+</head>
+<body>
+  <h1>Test Stream from API → WebSocket</h1>
+  <button id="startBtn">Start Stream</button>
+  <canvas id="videoCanvas" width="640" height="360"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/gh/phoboslab/jsmpeg@master/jsmpeg.min.js"></script>
+  <script>
+    const canvas = document.getElementById("videoCanvas");
+    const startBtn = document.getElementById("startBtn");
+
+    const cameraId = "0dPzDQx7mCLKM4zuCXVk"; // test camera
+    const token = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImE1YTAwNWU5N2NiMWU0MjczMDBlNTJjZGQ1MGYwYjM2Y2Q4MDYyOWIiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vYWktZGV0ZWN0LWZpcmUtc21va2UiLCJhdWQiOiJhaS1kZXRlY3QtZmlyZS1zbW9rZSIsImF1dGhfdGltZSI6MTc2MDc2MTQzOSwidXNlcl9pZCI6IlhzMDZ0V2hOdlRZbktiS3pvWTNXMXpkYUIyRjIiLCJzdWIiOiJYczA2dFdoTnZUWW5LYkt6b1kzVzF6ZGFCMkYyIiwiaWF0IjoxNzYwNzYxNDM5LCJleHAiOjE3NjA3NjUwMzksImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbImFkbWluQGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.nv7pCFWqXslrrtlq0Z06HJnrCBjgI5MdOqgbcJ-OPzdM5hsmDbZGIW7IhA4fcumyH_IwCHD08jajhGmDZ9b4v4uA_XZQYLHjZzpEISMa-Ori2To_K9DrJnhrYIyno_tUKsyTzpKConWmKfS5SPa9vhkeW4HtPlw35lnecujSonWpaKefgMXhMz2ZLDMbRSPZOa07ydFkM-zZoWavZFKtbseBqGsmzNHgEsf9dC285ImxrApRjNBcK2tx9DngU4iGEKrmQO2RE4wtBFJ6vag1bFTiklwYdjOeWFUlH2SbwVDwM7S36c3XYqyUknGcJyqd_K51Qh_HCcTX6oic4XjWyg"; // phải hợp lệ
+
+    startBtn.onclick = async () => {
+      try {
+        // 1️⃣ Gọi API backend để lấy wsUrl
+        const res = await fetch(`http://localhost:3000/api/stream/${cameraId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) throw new Error(`Không lấy được wsUrl: ${res.status}`);
+
+        const data = await res.json();
+        const wsUrl = `ws://localhost:3000${data.wsUrl}?token=${token}`;
+
+        console.log("🔥 WS URL received:", wsUrl);
+
+        // 2️⃣ Khởi tạo JSMpeg player
+        new JSMpeg.Player(wsUrl, {
+          canvas: canvas,
+          autoplay: true,
+          audio: false
+        });
+
+        console.log("✅ Stream started!");
+      } catch (err) {
+        console.error("❌ Stream error:", err);
+      }
+    };
+  </script>
+</body>
+</html>

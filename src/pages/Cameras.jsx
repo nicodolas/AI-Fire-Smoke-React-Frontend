@@ -66,11 +66,13 @@ export default function Cameras() {
               <button
                 key={n}
                 onClick={() => handleSelectLayout(n)}
+
                 className={`px-3 py-1 rounded-lg border transition-all ${
                   selectedCount === n
                     ? "bg-blue-600 text-white border-blue-600"
                     : "bg-white border-gray-300 hover:bg-gray-100"
                 }`}
+
               >
                 {n} view
               </button>
@@ -79,6 +81,7 @@ export default function Cameras() {
 
           {/* 🔹 Lưới hiển thị camera */}
           <div
+
             className={`grid gap-3 flex-1 ${
               selectedCount === 1
                 ? "grid-cols-1"
@@ -86,6 +89,7 @@ export default function Cameras() {
                 ? "grid-cols-2"
                 : "grid-cols-3"
             }`}
+
           >
             {selectedCameras.length === 0 ? (
               <div className="flex items-center justify-center text-gray-400 text-sm">
@@ -110,20 +114,24 @@ export default function Cameras() {
                 <li
                   key={cam.id}
                   onClick={() => handleSelectCamera(cam)}
+
                   className={`cursor-pointer border rounded-lg p-2 transition ${
                     selectedCameras.find((c) => c.id === cam.id)
                       ? "border-blue-500 bg-blue-50"
                       : "border-gray-200 hover:bg-gray-100"
                   }`}
+
                 >
                   <div className="font-medium">{cam.cameraName}</div>
                   <div className="text-xs text-gray-500">{cam.location}</div>
                   <div
+
                     className={`text-[10px] ${
                       cam.status === "active" || cam.status === true
                         ? "text-green-500"
                         : "text-red-500"
                     }`}
+
                   >
                     {cam.status === true ? "active" : cam.status}
                   </div>
